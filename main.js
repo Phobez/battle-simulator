@@ -1,8 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { defineHex, Grid, rectangle } from 'honeycomb-grid'
 
-// you may want the origin to be the top left corner of a hex's bounding box
-// instead of its center (which is the default)
 const Hex = defineHex({ dimensions: 30, origin: 'topLeft' })
 const grid = new Grid(Hex, rectangle({ width: 10, height: 10 }))
 
@@ -16,8 +14,15 @@ grid.forEach(renderHex)
 app.stage.addChild(graphics)
 
 function renderHex(hex) {
-    // PIXI.Polygon happens to be compatible with hex.corners
-    graphics.drawShape(
-        new PIXI.Polygon(hex.corners)
-    )
+    graphics
+        .beginFill('#000')
+        .drawShape(new PIXI.Polygon(hex.corners))
+        .endFill();
 }
+
+document.addEventListener('click', ({offsetX, offsetY}) => {
+    const hex = grid.pointToHex(
+        { x: offsetX, y: offsetY }
+    );
+    
+});
