@@ -1,28 +1,28 @@
 import * as PIXI from 'pixi.js';
-import { defineHex, Grid, rectangle } from 'honeycomb-grid'
-
-const Hex = defineHex({ dimensions: 30, origin: 'topLeft' })
-const grid = new Grid(Hex, rectangle({ width: 10, height: 10 }))
+import Renderer from './src/render'
 
 const app = new PIXI.Application({ backgroundAlpha: 0 })
-const graphics = new PIXI.Graphics()
 
 document.body.appendChild(app.view)
-graphics.lineStyle(1, 0x999999)
 
-grid.forEach(renderHex)
-app.stage.addChild(graphics)
+const renderer = new Renderer(
+    app,
+    { dimensions: 30, origin: 'topLeft' },
+    { width: 10, height: 10 }
+);
+renderer.init();
 
-function renderHex(hex) {
-    graphics
-        .beginFill('#000')
-        .drawShape(new PIXI.Polygon(hex.corners))
-        .endFill();
-}
+const grid = renderer.getGrid();
 
 document.addEventListener('click', ({offsetX, offsetY}) => {
     const hex = grid.pointToHex(
-        { x: offsetX, y: offsetY }
+        { x: offsetX, y: offsetY },
+        { allowOutside: false }
     );
     
+    if (hex !== undefined) {
+        renderer.selectCoordinate(hex.q, hex.r);
+    } else {
+        renderer.selectCoordinate(null, null);
+    }
 });
