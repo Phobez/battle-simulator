@@ -1,3 +1,8 @@
 {
-    "maxFPS": 30
+    "maxFPS": 30,
+    "hex":
+    {
+        "dimensions": 30,
+        "origin": "topLeft"
+    }
 }

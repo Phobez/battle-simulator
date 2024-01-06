@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { defineHex, Grid, rectangle } from 'honeycomb-grid'
-import { grid as gridColor } from '../colors.json'
+import { Grid } from 'honeycomb-grid'
 import { maxFPS } from '../game-config.json';
 
 class Renderer
@@ -8,14 +7,12 @@ class Renderer
     /**
      * Construct the renderer object
      * @param {PIXI.Application} app 
-     * @param {object} hexConfig 
-     * @param {object} gridConfig 
+     * @param {Grid} grid 
      */
-    constructor(app, hexConfig, gridConfig)
+    constructor(app, grid)
     {
         this.app = app;
-        this.hex = defineHex(hexConfig);
-        this.grid = new Grid(this.hex, rectangle(gridConfig));
+        this.grid = grid;
         /** @member {Number} */
         this.elapsed = 0.0;
         /** @member {Number} */
@@ -28,16 +25,12 @@ class Renderer
         const graphics = new PIXI.Graphics();
         graphics.lineStyle(1, 0x999999);
 
-        const renderHex = (hex) => {
-            let cellColor = gridColor.background;
-            if (this.selectedCoordinate.q == hex.q && this.selectedCoordinate.r == hex.r) {
-                cellColor = gridColor.highlight;
+        const renderTile = (tile) => {
+            if (this.selectedCoordinate.q == tile.q && this.selectedCoordinate.r == tile.r) {
+                tile.renderSelected(graphics);
+            } else {
+                tile.render(graphics);
             }
-        
-            graphics
-                .beginFill(cellColor)
-                .drawShape(new PIXI.Polygon(hex.corners))
-                .endFill();
         }
 
         this.app.ticker.add((delta) => {
@@ -48,7 +41,7 @@ class Renderer
                 return;
 
             this.elapsed = timeNow;
-            this.grid.forEach(renderHex);
+            this.grid.forEach(renderTile);
             this.app.stage.addChild(graphics);
         });
     }
