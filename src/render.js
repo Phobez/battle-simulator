@@ -5,6 +5,11 @@ import { maxFPS } from '../game-config.json';
 class Renderer
 {
     /**
+     * @type {Array}
+     */
+    eventList = [];
+
+    /**
      * Construct the renderer object
      * @param {PIXI.Application} app 
      * @param {Grid} grid 
@@ -22,16 +27,11 @@ class Renderer
 
     init()
     {
-        const graphics = new PIXI.Graphics();
-        graphics.lineStyle(1, 0x999999);
+        this.graphics = new PIXI.Graphics();
+        this.graphics.lineStyle(1, 0x999999);
 
-        const renderTile = (tile) => {
-            if (this.selectedCoordinate.q == tile.q && this.selectedCoordinate.r == tile.r) {
-                tile.renderSelected(graphics);
-            } else {
-                tile.render(graphics);
-            }
-        }
+        this.grid.forEach((tile) => tile.render(this.graphics));
+        this.app.stage.addChild(this.graphics);
 
         this.app.ticker.add((delta) => {
             const timeNow = (new Date()).getTime();
@@ -41,18 +41,44 @@ class Renderer
                 return;
 
             this.elapsed = timeNow;
-            this.grid.forEach(renderTile);
-            this.app.stage.addChild(graphics);
+            this.processEvents();
         });
     }
 
-    selectCoordinate(q, r){
-        this.selectedCoordinate.q = q;
-        this.selectedCoordinate.r = r;
+    processEvents(){
+        if (this.eventList.length === 0) return;
+
+        while (this.eventList.length > 0) {
+            const e = this.eventList.shift();
+            const tile = this.grid.getHex({q: e.q, r: e.r});
+            if (e.event == "click") {
+                tile.renderSelected(this.graphics);
+                const selectedHex = this.getSelectedHex();
+
+                if (selectedHex != null) {
+                    selectedHex.render(this.graphics);
+                }
+                
+                this.selectedCoordinate.q = e.q;
+                this.selectedCoordinate.r = e.r;
+            }
+        }
+    }
+
+    addEvent(event){
+        this.eventList.push(event);
     }
 
     getGrid(){
         return this.grid;
+    }
+
+    getSelectedHex(){
+        if (this.selectedCoordinate.q == null && this.selectedCoordinate.r == null) {
+            return null;
+        } else {
+            return this.grid.getHex({q: this.selectedCoordinate.q, r: this.selectedCoordinate.r});
+        }
     }
 }
 
