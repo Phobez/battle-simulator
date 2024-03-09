@@ -11,6 +11,11 @@ class MapTile extends defineHex(gameConfig.hex)
     cellNumber;
 
     /**
+     * @type {PIXI.Graphics}
+     */
+    graphic;
+
+    /**
      * @param {import('honeycomb-grid').HexCoordinates} coordinates 
      * @param {Number} cellNumber 
      */
@@ -18,37 +23,48 @@ class MapTile extends defineHex(gameConfig.hex)
     {
         const hex = new MapTile(coordinates);
         hex.cellNumber = cellNumber;
+        hex.graphic = new PIXI.Graphics();
+        // hex.graphic.lineStyle(1, 0x999999);
         return hex;
     }
 
     /**
      * @param {PIXI.Graphics} graphic 
      */
-    render(graphic)
+    render()
     {
+        this.graphic.clear();
+        this.graphic.lineStyle(1, 0x999999);
+        // graphic.clear();
         let cellColor = gridColor.background;
         if (this.cellNumber > 0) {
             cellColor = gridColor.primary;
         }
 
-        graphic.beginFill(cellColor).drawShape(new PIXI.Polygon(this.corners));
+        this.graphic.beginFill(cellColor).drawShape(new PIXI.Polygon(this.corners));
 
+        this.graphic.removeChildren();
         if (this.cellNumber > 0) {
             const text = new PIXI.Text(this.cellNumber);
             text.x = this.x - text.width / 2;
             text.y = this.y - text.height / 2;
-            graphic.addChild(text);
+            this.graphic.addChild(text);
         }
 
-        graphic.endFill();
+        this.graphic.endFill();
+
+        return this.graphic;
     }
 
     /**
      * @param {PIXI.Graphics} graphic 
      */
-    renderSelected(graphic)
+    renderSelected()
     {
-        graphic.beginFill(gridColor.highlight)
+        this.graphic.clear();
+        this.graphic.lineStyle(1, 0x999999);
+        // graphic.clear();
+        this.graphic.beginFill(gridColor.highlight)
             .drawShape(new PIXI.Polygon(this.corners))
             .endFill();
     }

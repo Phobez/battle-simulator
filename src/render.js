@@ -27,11 +27,7 @@ class Renderer
 
     init()
     {
-        this.graphics = new PIXI.Graphics();
-        this.graphics.lineStyle(1, 0x999999);
-
-        this.grid.forEach((tile) => tile.render(this.graphics));
-        this.app.stage.addChild(this.graphics);
+        this.grid.forEach((tile) => this.app.stage.addChild(tile.render()));
 
         this.app.ticker.add((delta) => {
             const timeNow = (new Date()).getTime();
