@@ -52,12 +52,12 @@ class Renderer
             const e = this.eventList.shift();
             const tile = this.grid.getHex({q: e.q, r: e.r});
             if (e.event == "click") {
-                tile.renderSelected(this.graphics);
                 const selectedHex = this.getSelectedHex();
-
                 if (selectedHex != null) {
-                    selectedHex.render(this.graphics);
+                    selectedHex.render();
                 }
+
+                tile.renderSelected();
                 
                 this.selectedCoordinate.q = e.q;
                 this.selectedCoordinate.r = e.r;
