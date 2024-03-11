@@ -22,7 +22,8 @@ class Renderer
         this.elapsed = 0.0;
         /** @member {Number} */
         this.fps = maxFPS;
-        this.selectedCoordinate = {q: null, r: null};
+        /** @member {Array.<{q: Number, r:Number}>} */
+        this.highlightedCoordinates = [];
     }
 
     init()
@@ -47,16 +48,18 @@ class Renderer
         while (this.eventList.length > 0) {
             const e = this.eventList.shift();
             const tile = this.grid.getHex({q: e.q, r: e.r});
-            if (e.event == "click") {
-                const selectedHex = this.getSelectedHex();
-                if (selectedHex != null) {
-                    selectedHex.render();
-                }
-
+            if (e.event == "highlight") {
                 tile.renderSelected();
-                
-                this.selectedCoordinate.q = e.q;
-                this.selectedCoordinate.r = e.r;
+                this.highlightedCoordinates.push({q: tile.q, r: tile.r});
+            } else if (e.event == "unhighlight") {
+                tile.render();
+                const highlightedIdx = this.highlightedCoordinates.findIndex(
+                    (coordinate) => coordinate.q == tile.q && coordinate.r == tile.r
+                );
+
+                if (highlightedIdx !== -1) {
+                    this.highlightedCoordinates.splice(highlightedIdx, 1);
+                }
             }
         }
     }
@@ -69,12 +72,11 @@ class Renderer
         return this.grid;
     }
 
-    getSelectedHex(){
-        if (this.selectedCoordinate.q == null && this.selectedCoordinate.r == null) {
-            return null;
-        } else {
-            return this.grid.getHex({q: this.selectedCoordinate.q, r: this.selectedCoordinate.r});
-        }
+    getHighlightedTiles(){
+        if (this.highlightedCoordinates.length === 0) return [];
+        return this.highlightedCoordinates.map((coordinate) => {
+            return this.grid.getHex(coordinate);
+        });
     }
 }
 

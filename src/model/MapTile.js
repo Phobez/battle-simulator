@@ -24,7 +24,6 @@ class MapTile extends defineHex(gameConfig.hex)
         const hex = new MapTile(coordinates);
         hex.cellNumber = cellNumber;
         hex.graphic = new PIXI.Graphics();
-        // hex.graphic.lineStyle(1, 0x999999);
         return hex;
     }
 
@@ -35,7 +34,7 @@ class MapTile extends defineHex(gameConfig.hex)
     {
         this.graphic.clear();
         this.graphic.lineStyle(1, 0x999999);
-        // graphic.clear();
+
         let cellColor = gridColor.background;
         if (this.cellNumber > 0) {
             cellColor = gridColor.primary;
@@ -63,7 +62,7 @@ class MapTile extends defineHex(gameConfig.hex)
     {
         this.graphic.clear();
         this.graphic.lineStyle(1, 0x999999);
-        // graphic.clear();
+
         this.graphic.beginFill(gridColor.highlight)
             .drawShape(new PIXI.Polygon(this.corners))
             .endFill();

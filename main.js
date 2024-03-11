@@ -39,13 +39,14 @@ document.addEventListener('click', ({offsetX, offsetY}) => {
         { allowOutside: false }
     );
 
-    if (hex !== undefined) {
-        renderer.addEvent({q: hex.q, r: hex.r, event: 'click'});
+    if (hex === undefined) return;
+
+    const highlightedTiles = renderer.getHighlightedTiles();
+    const clickedTile = highlightedTiles.find((tile) => hex.q == tile.q && hex.r == tile.r);
+    if (clickedTile !== undefined) {
+        renderer.addEvent({q: hex.q, r: hex.r, event: 'unhighlight'});
+    } else {
+        renderer.addEvent({q: hex.q, r: hex.r, event: 'highlight'});
     }
-    
-    // if (hex !== undefined) {
-    //     renderer.selectCoordinate(hex.q, hex.r);
-    // } else {
-    //     renderer.selectCoordinate(null, null);
-    // }
+
 });
