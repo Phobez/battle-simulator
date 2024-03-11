@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Grid } from 'honeycomb-grid';
 import Renderer from './src/render';
 import MapTile from './src/model/MapTile';
+import GameSystem from './src/system';
 
 const app = new PIXI.Application({ backgroundAlpha: 0 });
 
@@ -33,20 +34,17 @@ const grid = renderer.getGrid();
 
 console.log(grid);
 
+const gameSystem = new GameSystem(renderer);
+
 document.addEventListener('click', ({offsetX, offsetY}) => {
-    const hex = grid.pointToHex(
+    const tile = grid.pointToHex(
         { x: offsetX, y: offsetY },
         { allowOutside: false }
     );
 
-    if (hex === undefined) return;
-
-    const highlightedTiles = renderer.getHighlightedTiles();
-    const clickedTile = highlightedTiles.find((tile) => hex.q == tile.q && hex.r == tile.r);
-    if (clickedTile !== undefined) {
-        renderer.addEvent({q: hex.q, r: hex.r, event: 'unhighlight'});
+    if (gameSystem.activeTile == null) {
+        gameSystem.selectTile(tile);
     } else {
-        renderer.addEvent({q: hex.q, r: hex.r, event: 'highlight'});
+        gameSystem.attemptTileMovement(tile);
     }
-
 });
