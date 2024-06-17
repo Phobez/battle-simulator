@@ -1,8 +1,16 @@
 {
-    "grid":
-    {
-        "background": "#000",
-        "primary": "#0d6efd",
-        "highlight": "#44ffb7"
-    }
+   "grid": {
+      "background": "#000",
+      "primary": "#0d6efd"
+   },
+   "player": {
+      "red": {
+         "primary": "#c40000",
+         "active": "#ff6868"
+      },
+      "blue": {
+         "primary": "#004aff",
+         "active": "#71afff"
+      }
+   }
 }

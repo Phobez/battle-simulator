@@ -1,9 +1,9 @@
-import { HexCoordinates, defineHex } from "honeycomb-grid";
-import gameConfig from "../../gameConfig";
+import { HexCoordinates } from "honeycomb-grid";
 import { grid as gridColor } from "../../colors.json";
 import * as PIXI from "pixi.js";
+import BaseHex from "./Base/TileHex";
 
-class MapTile extends defineHex(gameConfig.hex) {
+class MapTile extends BaseHex {
    cellNumber!: number;
    graphic!: PIXI.Graphics;
 
@@ -16,7 +16,6 @@ class MapTile extends defineHex(gameConfig.hex) {
 
    render() {
       this.graphic.clear();
-      // this.graphic.setStrokeStyle();
 
       let cellColor = gridColor.background;
       if (this.cellNumber > 0) {
