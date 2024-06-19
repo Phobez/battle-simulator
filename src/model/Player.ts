@@ -18,9 +18,13 @@ class Player extends PlayerHex {
    // }
 
    // Temporary Create function for Hex Player
-   static create(initialTile: MapTile, colorKey: PlayerTeamColor) {
+   static create(
+      power: number,
+      initialTile: MapTile,
+      colorKey: PlayerTeamColor
+   ) {
       const hex = new Player({ q: initialTile.q, r: initialTile.r });
-      hex.power = 0;
+      hex.power = power;
       hex.positionTile = initialTile;
       hex.colorKey = colorKey;
       hex.graphic = new PIXI.Graphics();

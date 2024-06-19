@@ -44,7 +44,7 @@ class BattleSimulatorClient {
       const playerPos = initialState.G.player.position;
 
       // const player = new Player(playerPos, "blue");
-      const player = Player.create(this.grid.getHex(playerPos)!, "blue");
+      const player = Player.create(0, this.grid.getHex(playerPos)!, "blue");
       pixiApp.stage.addChild(player.render());
       return player;
    }
@@ -67,12 +67,13 @@ class BattleSimulatorClient {
       this.player.destroy();
 
       const newPlayerPosition = state.G.player.position;
-      const player = Player.create(
-         this.grid.getHex(newPlayerPosition)!,
-         "blue"
-      );
+      const tile = this.grid.getHex(newPlayerPosition)!;
+      const player = Player.create(state.G.player.power, tile, "blue");
       pixiApp.stage.addChild(player.render());
       this.player = player;
+
+      tile.cellNumber = 0;
+      tile.render();
       // console.log("Before: ", { q: this.player.q, r: this.player.r });
       // console.log("After: ", newPlayerPosition);
       // const cubePosition = toCube(TileHex.settings, newPlayerPosition);
