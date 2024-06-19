@@ -32,9 +32,7 @@ class BattleSimulatorClient {
 
       // Temporary code to draw grid here
       const grid = Grid.fromIterable(
-         cells.flatMap((row) =>
-            row.map((cell) => MapTile.create(cell.coordinates, cell.cellNumber))
-         )
+         cells.map((cell) => MapTile.create(cell.coordinates, cell.cellNumber))
       );
 
       grid.forEach((tile) => pixiApp.stage.addChild(tile.render()));
@@ -43,7 +41,7 @@ class BattleSimulatorClient {
 
    createPlayer() {
       const initialState = this.client.getInitialState();
-      const playerPos = initialState.G.playerPos;
+      const playerPos = initialState.G.player.position;
 
       // const player = new Player(playerPos, "blue");
       const player = Player.create(this.grid.getHex(playerPos)!, "blue");
@@ -68,7 +66,7 @@ class BattleSimulatorClient {
       if (state === null) return;
       this.player.destroy();
 
-      const newPlayerPosition = state.G.playerPos;
+      const newPlayerPosition = state.G.player.position;
       const player = Player.create(
          this.grid.getHex(newPlayerPosition)!,
          "blue"

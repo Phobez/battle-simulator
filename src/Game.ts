@@ -4,10 +4,11 @@ import { BaseMapTile } from "./types/model/BaseMapTile";
 import { HexCoordinates, distance } from "honeycomb-grid";
 import { INVALID_MOVE } from "boardgame.io/core";
 import BaseHex from "./model/Base/TileHex";
+import { BasePlayer } from "./types/model/BasePlayer";
 
 export interface GameState {
-   cells: BaseMapTile[][];
-   playerPos: HexCoordinates;
+   cells: BaseMapTile[];
+   player: BasePlayer;
 }
 
 export const BattleSimulator: Game<GameState> = {
@@ -15,14 +16,17 @@ export const BattleSimulator: Game<GameState> = {
       const cells = mockBoard();
       return {
          cells: cells,
-         playerPos: mockPosition(cells),
+         player: {
+            position: mockPosition(cells),
+            power: 0,
+         },
       };
    },
    moves: {
       movePlayer: ({ G }, target: HexCoordinates) => {
-         if (distance(BaseHex.settings, G.playerPos, target) > 1)
+         if (distance(BaseHex.settings, G.player.position, target) > 1)
             return INVALID_MOVE;
-         G.playerPos = target;
+         G.player.position = target;
       },
    },
 };

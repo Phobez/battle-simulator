@@ -7,22 +7,19 @@ function getRandomInt(min: number, max: number) {
    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 }
 
-export const mockBoard = (): BaseMapTile[][] => {
+export const mockBoard = (): BaseMapTile[] => {
    return Array.from(Array(10), (_, i) =>
       Array.from(Array(10), (_, j) => ({
          coordinates: { row: i, col: j },
          cellNumber: Math.random() * 3 < 1 ? 1 : 0,
       }))
-   );
+   ).flat();
 };
 
-export const mockPosition = (board: BaseMapTile[][]): HexCoordinates => {
-   const availablePositions = board.map((row) =>
-      row.map((c, i) => (c.cellNumber === 0 ? i : -1)).filter((c) => c > -1)
-   );
-   const rowIdx = getRandomInt(0, availablePositions.length);
-   const colIdx = getRandomInt(0, availablePositions[rowIdx].length);
-   return { row: rowIdx, col: availablePositions[rowIdx][colIdx] };
+export const mockPosition = (board: BaseMapTile[]): HexCoordinates => {
+   const availablePositions = board.filter((tile) => tile.cellNumber === 0);
+   const randomTileIdx = getRandomInt(0, availablePositions.length);
+   return availablePositions[randomTileIdx].coordinates;
 };
 
 export const multiplyMatrix = (mat1: number[][], mat2: number[][]) => {
