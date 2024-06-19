@@ -3,7 +3,6 @@ import MapTile from "./MapTile";
 import * as PIXI from "pixi.js";
 import { player as playerColor } from "../../colors.json";
 import { PlayerTeamColor } from "../types/config/colors";
-import { multiplyMatrix } from "../temp/board-mocker";
 
 // class Player {
 class Player extends PlayerHex {
@@ -33,27 +32,13 @@ class Player extends PlayerHex {
 
       const color = playerColor[this.colorKey].active;
 
-      // TODO: Turns original hex corner into shrinked corner
+      // Turns original hex corner into shrinked corner
       //    => Linear Transformation - Scaling
       // https://gamemath.com/book/matrixtransforms.html
-
-      // Get Original corner points then
-      //    Standardize each corner point by substracting it from the hex center
-      const originalCorners = this.corners.map((p) => [
-         p.x - this.x,
-         p.y - this.y,
-      ]);
-
-      // Scale matrix
       const scale = 4 / 5;
-      const sm = [
-         [scale, 0],
-         [0, scale],
-      ];
-
-      const newCorners = multiplyMatrix(originalCorners, sm).map((p) => ({
-         x: p[0] + this.x,
-         y: p[1] + this.y,
+      const newCorners = this.corners.map((p) => ({
+         x: (p.x - this.x) * scale + this.x,
+         y: (p.y - this.y) * scale + this.y,
       }));
 
       this.graphic
