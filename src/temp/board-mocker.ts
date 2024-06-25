@@ -1,5 +1,6 @@
-import { HexCoordinates } from "honeycomb-grid";
+import { PartialCubeCoordinates, toCube } from "honeycomb-grid";
 import { BaseMapTile } from "../types/model/BaseMapTile";
+import TileHex from "../model/Base/TileHex";
 
 function getRandomInt(min: number, max: number) {
    const minCeiled = Math.ceil(min);
@@ -10,13 +11,13 @@ function getRandomInt(min: number, max: number) {
 export const mockBoard = (): BaseMapTile[] => {
    return Array.from(Array(10), (_, i) =>
       Array.from(Array(10), (_, j) => ({
-         coordinates: { row: i, col: j },
+         coordinates: toCube(TileHex.settings, { row: i, col: j }),
          cellNumber: Math.random() * 3 < 1 ? 1 : 0,
       }))
    ).flat();
 };
 
-export const mockPosition = (board: BaseMapTile[]): HexCoordinates => {
+export const mockPosition = (board: BaseMapTile[]): PartialCubeCoordinates => {
    const availablePositions = board.filter((tile) => tile.cellNumber === 0);
    const randomTileIdx = getRandomInt(0, availablePositions.length);
    return availablePositions[randomTileIdx].coordinates;

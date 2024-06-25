@@ -1,6 +1,6 @@
-import { HexCoordinates } from "honeycomb-grid";
+import { PartialCubeCoordinates } from "honeycomb-grid";
 
 export declare type BaseMapTile = {
    cellNumber: number;
-   coordinates: HexCoordinates;
+   coordinates: PartialCubeCoordinates;
 };

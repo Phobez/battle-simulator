@@ -1,4 +1,4 @@
-import { HexCoordinates } from "honeycomb-grid";
+import { PartialCubeCoordinates } from "honeycomb-grid";
 import { grid as gridColor } from "../../colors.json";
 import * as PIXI from "pixi.js";
 import BaseHex from "./Base/TileHex";
@@ -7,7 +7,7 @@ class MapTile extends BaseHex {
    cellNumber!: number;
    graphic!: PIXI.Graphics;
 
-   static create(coordinates: HexCoordinates, cellNumber: number) {
+   static create(coordinates: PartialCubeCoordinates, cellNumber: number) {
       const hex = new MapTile(coordinates);
       hex.cellNumber = cellNumber;
       hex.graphic = new PIXI.Graphics();
