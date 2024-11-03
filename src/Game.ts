@@ -1,5 +1,5 @@
 import { Game } from "boardgame.io";
-import { mockBoard, mockPosition } from "./temp/board-mocker";
+import { mockBoard, mockPlayers } from "./temp/board-mocker";
 import { BaseMapTile } from "./types/model/BaseMapTile";
 import { PartialCubeCoordinates, distance, toCube } from "honeycomb-grid";
 import { INVALID_MOVE } from "boardgame.io/core";
@@ -8,7 +8,7 @@ import { BasePlayer } from "./types/model/BasePlayer";
 
 export interface GameState {
    cells: BaseMapTile[];
-   player: BasePlayer;
+   players: BasePlayer[];
 }
 
 export const BattleSimulator: Game<GameState> = {
@@ -16,17 +16,21 @@ export const BattleSimulator: Game<GameState> = {
       const cells = mockBoard();
       return {
          cells: cells,
-         player: {
-            position: mockPosition(cells),
-            power: 0,
-         },
+         players: mockPlayers(cells, 2),
       };
    },
+   minPlayers: 2,
+   maxPlayers: 2,
+   turn: {
+      minMoves: 1,
+      maxMoves: 1,
+   },
    moves: {
-      movePlayer: ({ G }, target: PartialCubeCoordinates) => {
-         if (distance(BaseHex.settings, G.player.position, target) > 1)
+      movePlayer: ({ G, playerID }, target: PartialCubeCoordinates) => {
+         const player = G.players[+playerID];
+         if (distance(BaseHex.settings, player.position, target) > 1)
             return INVALID_MOVE;
-         G.player.position = target;
+         player.position = target;
 
          const currCoordinates = toCube(BaseHex.settings, target);
          const targetCell = G.cells.filter((cell) => {
@@ -37,7 +41,7 @@ export const BattleSimulator: Game<GameState> = {
          })[0];
 
          if (targetCell.cellNumber > 0) {
-            G.player.power += targetCell.cellNumber;
+            player.power += targetCell.cellNumber;
             targetCell.cellNumber = 0;
          }
       },

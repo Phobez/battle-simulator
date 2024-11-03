@@ -13,14 +13,14 @@ class BattleSimulatorClient {
    client: _ClientImpl<GameState>;
    pixiApp: PIXI.Application;
    grid: Grid<MapTile>;
-   players: Player[];
+   player: Player;
 
    constructor(pixiApp: PIXI.Application) {
       this.client = Client({ game: BattleSimulator });
       this.client.start();
       this.pixiApp = pixiApp;
       this.grid = this.createBoard();
-      this.players = this.createPlayers();
+      this.player = this.createPlayer();
 
       this.attachListeners();
       this.client.subscribe((state) => this.update(state));
@@ -39,20 +39,14 @@ class BattleSimulatorClient {
       return grid;
    }
 
-   createPlayers() {
+   createPlayer() {
       const initialState = this.client.getInitialState();
-      const players = initialState.G.players;
+      const playerPos = initialState.G.player.position;
 
-      return players.map((player, i) => {
-         // const player = new Player(playerPos, "blue");
-         const playerTile = Player.create(
-            0,
-            this.grid.getHex(player.position)!,
-            i == 0 ? "blue" : "red"
-         );
-         pixiApp.stage.addChild(playerTile.render());
-         return playerTile;
-      });
+      // const player = new Player(playerPos, "blue");
+      const player = Player.create(0, this.grid.getHex(playerPos)!, "blue");
+      pixiApp.stage.addChild(player.render());
+      return player;
    }
 
    attachListeners() {
@@ -70,25 +64,16 @@ class BattleSimulatorClient {
 
    update(state: ClientState<GameState>) {
       if (state === null) return;
-      this.players = this.players.map((player, i) => {
-         player.destroy();
+      this.player.destroy();
 
-         const playerState = state.G.players[i];
-         const newPlayerPosition = playerState.position;
-         const tile = this.grid.getHex(newPlayerPosition)!;
-         const newPlayer = Player.create(
-            playerState.power,
-            tile,
-            i == 0 ? "blue" : "red"
-         );
-         pixiApp.stage.addChild(newPlayer.render());
+      const newPlayerPosition = state.G.player.position;
+      const tile = this.grid.getHex(newPlayerPosition)!;
+      const player = Player.create(state.G.player.power, tile, "blue");
+      pixiApp.stage.addChild(player.render());
+      this.player = player;
 
-         tile.cellNumber = 0;
-         tile.render();
-
-         return newPlayer;
-      });
-
+      tile.cellNumber = 0;
+      tile.render();
       // console.log("Before: ", { q: this.player.q, r: this.player.r });
       // console.log("After: ", newPlayerPosition);
       // const cubePosition = toCube(TileHex.settings, newPlayerPosition);

@@ -1,6 +1,7 @@
-import { PartialCubeCoordinates, toCube } from "honeycomb-grid";
-import { BaseMapTile } from "../types/model/BaseMapTile";
+import { toCube } from "honeycomb-grid";
 import TileHex from "../model/Base/TileHex";
+import { BaseMapTile } from "../types/model/BaseMapTile";
+import { BasePlayer } from "../types/model/BasePlayer";
 
 function getRandomInt(min: number, max: number) {
    const minCeiled = Math.ceil(min);
@@ -17,10 +18,22 @@ export const mockBoard = (): BaseMapTile[] => {
    ).flat();
 };
 
-export const mockPosition = (board: BaseMapTile[]): PartialCubeCoordinates => {
+export const mockPlayers = (
+   board: BaseMapTile[],
+   playerCount: number
+): BasePlayer[] => {
    const availablePositions = board.filter((tile) => tile.cellNumber === 0);
-   const randomTileIdx = getRandomInt(0, availablePositions.length);
-   return availablePositions[randomTileIdx].coordinates;
+   const players: BasePlayer[] = [];
+
+   for (let i = 0; i < playerCount; i++) {
+      const randomTileIdx = getRandomInt(0, availablePositions.length);
+      players.push({
+         power: 0,
+         position: availablePositions.splice(randomTileIdx, 1)[0].coordinates,
+      });
+   }
+
+   return players;
 };
 
 export const multiplyMatrix = (mat1: number[][], mat2: number[][]) => {
