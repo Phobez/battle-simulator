@@ -1,5 +1,5 @@
 import { Client } from "boardgame.io/client";
-import { BattleSimulator, GameState } from "./Game";
+import { BattleSimulator } from "./Game";
 import {
    ClientState,
    _ClientImpl,
@@ -8,6 +8,7 @@ import MapTile from "./model/MapTile";
 import { Grid } from "honeycomb-grid";
 import * as PIXI from "pixi.js";
 import Player from "./model/Player";
+import { GameState } from "./types/GameState";
 
 class BattleSimulatorClient {
    client: _ClientImpl<GameState>;
