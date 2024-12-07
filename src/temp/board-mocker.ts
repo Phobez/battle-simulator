@@ -28,8 +28,10 @@ export const mockPlayers = (
    for (let i = 0; i < playerCount; i++) {
       const randomTileIdx = getRandomInt(0, availablePositions.length);
       players.push({
+         id: i.toString(),
          power: 0,
          position: availablePositions.splice(randomTileIdx, 1)[0].coordinates,
+         isAlive: true,
       });
    }
 

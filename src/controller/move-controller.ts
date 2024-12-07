@@ -9,8 +9,8 @@ const movePlayer: Move<GameState> = (
    target: PartialCubeCoordinates
 ) => {
    const player = G.players[+playerID];
-   if (distance(TileHex.settings, player.position, target) > 1)
-      return INVALID_MOVE;
+   const dist = distance(TileHex.settings, player.position, target);
+   if (dist > 1 || dist == 0) return INVALID_MOVE;
    player.position = target;
 
    const currCoordinates = toCube(TileHex.settings, target);

@@ -9,6 +9,7 @@ import { Grid } from "honeycomb-grid";
 import * as PIXI from "pixi.js";
 import Player from "./model/Player";
 import { GameState } from "./types/GameState";
+import { getObjectFromStateAndCoord } from "./util/board";
 
 class BattleSimulatorClient {
    client: _ClientImpl<GameState>;
@@ -62,19 +63,37 @@ class BattleSimulatorClient {
             { x: offsetX, y: offsetY },
             { allowOutside: false }
          );
+         const state = this.client.getState();
 
-         if (tile !== undefined) {
-            this.client.moves.movePlayer({ q: tile.q, r: tile.r });
+         if (state == null || tile === undefined) return;
+
+         const coordinate = { q: tile.q, r: tile.r };
+         const object = getObjectFromStateAndCoord(state.G, coordinate);
+
+         if (object == null) {
+            this.client.moves.movePlayer(coordinate);
+            return;
+         }
+
+         if (object.id != state.ctx.currentPlayer) {
+            this.client.moves.fight(object.id);
          }
       });
    }
 
    update(state: ClientState<GameState>) {
       if (state === null) return;
-      this.players = this.players.map((player, i) => {
+      const newPlayers = [];
+
+      for (let i = 0; i < this.players.length; i++) {
+         const player = this.players[i];
          player.destroy();
 
          const playerState = state.G.players[i];
+         if (!playerState.isAlive) {
+            continue;
+         }
+
          const newPlayerPosition = playerState.position;
          const tile = this.grid.getHex(newPlayerPosition)!;
          const newPlayer = Player.create(
@@ -87,8 +106,18 @@ class BattleSimulatorClient {
          tile.cellNumber = 0;
          tile.render();
 
-         return newPlayer;
-      });
+         newPlayers.push(newPlayer);
+      }
+
+      this.players = newPlayers;
+
+      if (state.ctx.gameover) {
+         const textGameOverElement = document.querySelector("#game-over-text")!;
+         textGameOverElement.textContent =
+            state.ctx.gameover.winner !== undefined
+               ? `Player ${state.ctx.gameover.winner} Win!`
+               : "It's a Draw!";
+      }
 
       // console.log("Before: ", { q: this.player.q, r: this.player.r });
       // console.log("After: ", newPlayerPosition);
